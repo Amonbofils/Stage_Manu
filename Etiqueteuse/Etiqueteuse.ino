@@ -19,7 +19,7 @@ void setup(){
 
 void loop(){
   float distance = sonar.ping_cm();
-  if (0<distance && distance < DISTANCE_DETECT && bouteilleTrouvee == false ){
+  if (0<distance && distance < DISTANCE_DETECT && bouteilleTrouvee == false){
     bouteilleTrouvee = true;
     digitalWrite(CMD_RELAY, LOW);
     delay(TIME_DELAY);
