@@ -9,7 +9,7 @@
             "includePath": [
                 "${workspaceRoot}",
                 "C:\\Program Files (x86)\\Arduino\\hardware\\**",
-                "C:\\Users\\emmam\\OneDrive\\Arduino\\libraries\\**"
+                "C:\\Users\\emmam\\OneDrive\\Documents\\Arduino\\libraries\\**"
 
             ],
             "browse": {
@@ -17,7 +17,7 @@
                 "path": [
                     "${workspaceRoot}",
                     "C:\\Program Files (x86)\\Arduino\\hardware\\**",
-                    "C:\\Users\\emmam\\OneDrive\\Arduino\\libraries\\**"
+                    "C:\\Users\\emmam\\OneDrive\\Documents\\Arduino\\libraries\\**"
                 ]
             },
             "cStandard": "gnu11",

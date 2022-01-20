@@ -1,11 +1,11 @@
 {
     "configuration": "cpu=atmega2560",
     "board": "arduino:avr:mega",
-    "sketch": "EssaisArduino\\EssaisArduino.ino",
+    "sketch": "Etiqueteuse\\Etiqueteuse.ino",
     "includePath": [
         "${workspaceRoot}",
         "C:\\Program Files (x86)\\Arduino\\hardware\\**",
-        "C:\\Users\\emmam\\OneDrive\\Arduino\\libraries\\**"
+        "C:\\Users\\emmam\\OneDrive\\Documents\\Arduino\\libraries\\**"
     ],
     "programmer": "arduino:avrispmkii",
     "port": "COM7"
