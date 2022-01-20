@@ -10,6 +10,9 @@
 #define TIME_DELAY 2000 // Délais d'attente
 bool bouteilleTrouvee = false; // Résultat capteur
 NewPing sonar = NewPing(TRIG_PIN, ECHO_PIN,DISTANCE_MAX); // Analyse capteur
+const unsigned long eventInterval = 2000; // Definir l'interval de l'évenement
+unsigned long previousTime = 0; // Créer une mise à jour
+int currentTime; //Sortie de millis
 
 void setup(){
   Serial.begin(9600);
@@ -28,5 +31,10 @@ void loop(){ // Démarrage de la boucle
   else if(bouteilleTrouvee== true && (distance == 0 || distance >DISTANCE_DETECT)){// Si une bouteille est trouvée,et que la distance est égale à zéro ou que la distance est supérieur à DISTANC_DETECT 
     bouteilleTrouvee = false;// Alors on marque bouteille pas trouvée 
     Serial.println("bouteille trouvée");// impression sur monitor 
+  unsigned long currentTimes = millis();
+  if( currentTime - previousTime >= eventInterval){// Comparaison temps passé et interval
+      //Serial.println("retour");
+      previousTime = currentTime;// Remise à jour
+      }
   }
 }
