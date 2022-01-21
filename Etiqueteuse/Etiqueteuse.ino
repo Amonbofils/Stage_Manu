@@ -65,6 +65,7 @@ void loop(){ // Démarrage de la boucle
   } 
 
   detection = digitalRead(capteur); // Lecture du capteur d'encombrement
+  Serial.println(detection);
   if(detection == 0){ // Pas d'encombrement sur la ligne
         digitalWrite(CMD_RELAY1, HIGH); // Vérin stoppeur rentré
         digitalWrite(led, HIGH); // Led encombrement éteinte
