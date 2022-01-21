@@ -8,38 +8,38 @@
 #define DISTANCE_DETECT 5 // Détection de distance
 #define DISTANCE_MAX 20 // Distance Maximale
 #define TIME_DELAY 2000 // Délais d'attente
-bool bouteilleTrouvee = false; // Résultat capteur
 NewPing sonar = NewPing(TRIG_PIN, ECHO_PIN,DISTANCE_MAX); // Analyse capteur
 unsigned long eventInterval = 2000; // Definir l'interval de l'évenement
 unsigned long eventDetected = 0; // Créer une mise à jour
 unsigned long currentTime; //Sortie de millis
-bool timerStarted = false;
+bool bouteilleTrouvee = false; // Résultat capteur
+bool timerStarted = false; // Impression état Timer
 
 void setup(){
   Serial.begin(9600);
   pinMode(CMD_RELAY, OUTPUT); // Action sur le vérin
-  digitalWrite(CMD_RELAY, HIGH); // démarrage de la boucle vérin rentré
+  digitalWrite(CMD_RELAY, HIGH); // Démarrage de la boucle vérin rentré
 }
 void loop(){ // Démarrage de la boucle
   float distance = sonar.ping_cm(); // Distance en décimal, donnée par NewPing
   if (0<distance && distance < DISTANCE_DETECT && !bouteilleTrouvee){ //  Si 0 < distance > DISTANCE_DETECT et pas de bouteille trouvée
     bouteilleTrouvee = true; // Signaler la bouteille trouvée
-    eventDetected = millis();
-    Serial.println("trouvee");
-    timerStarted = true;
+    eventDetected = millis(); // EventDetect est égal à la fonction millis
+    // Serial.println("trouvee"); 
+    timerStarted = true; // Timer commencé
     digitalWrite(CMD_RELAY, LOW); // Actionnement de vérin 
     //delay(TIME_DELAY); // Vérin actionné pendant TIME_DELAY
   }
-  else if(bouteilleTrouvee && !timerStarted && (distance == 0 || distance >DISTANCE_DETECT)){// Si une bouteille est trouvée,et que la distance est égale à zéro ou que la distance est supérieur à DISTANC_DETECT 
-    bouteilleTrouvee = false;// Alors on marque bouteille pas trouvée 
-    Serial.println("bouteille partie");// impression sur monitor 
+  else if(bouteilleTrouvee && !timerStarted && (distance == 0 || distance >DISTANCE_DETECT)){ // Si une bouteille est trouvée,et que la distance est égale à zéro ou que la distance est supérieur à DISTANC_DETECT 
+    bouteilleTrouvee = false; // Alors on marque bouteille pas trouvée 
+    Serial.println("bouteille partie"); // impression sur monitor 
   }
   
-  currentTime = millis();
-  if(timerStarted && (currentTime - eventDetected >= eventInterval)){// Comparaison temps passé et interval
+  currentTime = millis(); // CurrentTime est égal à millis
+  if(timerStarted && (currentTime - eventDetected >= eventInterval)){ // Comparaison temps passé et interval
     digitalWrite(CMD_RELAY, HIGH); // Rétractation du vérin
-    timerStarted = false;
-    Serial.print("timer");
+    timerStarted = false; //  Timer terminé
+    // Serial.print("timer");
   } 
 
 }

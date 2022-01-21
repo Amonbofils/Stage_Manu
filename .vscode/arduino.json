@@ -1,5 +1,5 @@
 {
-    "board": "arduino:avr:uno",
+    "board": "arduino:avr:mega",
     "sketch": "Etiqueteuse\\Etiqueteuse.ino",
     "includePath": [
         "${workspaceRoot}",
@@ -7,5 +7,6 @@
         "C:\\Users\\emmam\\OneDrive\\Documents\\Arduino\\libraries\\**"
     ],
     "programmer": "arduino:avrispmkii",
-    "port": "COM3"
+    "port": "COM4",
+    "configuration": "cpu=atmega2560"
 }
