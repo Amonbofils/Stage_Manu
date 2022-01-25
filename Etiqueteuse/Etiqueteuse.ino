@@ -39,6 +39,7 @@ void setup(){
   captBottlStop.interval(50); 
   
 }
+
 void loop(){ 
   Graph1();
   Graph2();
@@ -54,7 +55,7 @@ void loop(){
  */
 void Graph1(){
   if (Graph1Step == 0){
-    
+
   } 
   else if (Graph1Step == 1){
 
