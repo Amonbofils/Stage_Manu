@@ -78,13 +78,13 @@ void Graph1(){
  */
 void Graph2(){
   /* Declare locales */
-  bool findBottleStop;
+  bool findBottle;
   static unsigned long detectedBottle;
   captBottlStop.update();
   
   if (Graph2Step == 0){
-    findBottleStop = captBottlStop.read();
-    if (findBottleStop){
+    findBottle = captBottlStop.read();
+    if (findBottle){
       /* Bottle detected on the labeler --> go to step 1*/
       Graph2Step = 1;
     }
@@ -107,17 +107,18 @@ void Graph2(){
     /* check if timer is over */
     if(millis() - detectedBottle >= detectedBottle){
       /* Timer is over */
-      /* Retract pusher */
-      digitalWrite(CMD_VER_ETIQ, HIGH);
-      /* reset Timer */
-      detectedBottle = 0;
       /* Go to step 4 */
        Graph2Step = 4;
     }
   }
   else if (Graph2Step == 4){
-    findBottleStop = captBottlStop.read();
-      if (!findBottleStop){
+    /* Retract pusher */
+    digitalWrite(CMD_VER_ETIQ, HIGH);
+    /* reset Timer */
+    detectedBottle = 0;
+    
+    findBottle = captBottlStop.read();
+      if (!findBottle){
         Graph2Step = 5;
       }
   }
