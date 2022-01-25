@@ -10,12 +10,15 @@
 #define DISTANCE_DETECT 5 
 #define DISTANCE_MAX 20 
 #define TIME_DELAY 2000
-#define TIMER_LABEL 2000
+#define LABEL_TIMER 2000
+#define SECURITY_TIMER 3000 
 #define CAPT_VER_STOP 2
-
+#define CAPT_END 6
 NewPing captLabel = NewPing(TRIG_CAPT_LABEL, ECHO_CAPT_LABEL, DISTANCE_MAX); 
 Bounce captBottleStop = Bounce();
 Bounce captBottleLabel = Bounce();
+Bounce captBottleEnd = Bounce();
+
 
 /**
  * @Graph1 => Graph du vérin d'entrée (0-3)
@@ -38,9 +41,9 @@ void setup(){
   digitalWrite(CMD_VER_LABEL, HIGH); 
   captBottleStop.attach(CAPT_VER_STOP,  INPUT_PULLUP );
   captBottleStop.interval(50); 
-  //captBottleLabel.attach(TRIG_CAPT_LABEL, ECHO_CAPT_LABEL, INPUT_PULLUP);
-  captBottleLabel.attach (50);
-  
+  captBottleEnd.attach(CAPT_END, INPUT_PULLUP);
+  captBottleEnd.interval(50);
+
 }
 
 void loop(){ 
@@ -58,15 +61,15 @@ void loop(){
  */
 void Graph1(){
   /* Definir les variables / constantes locales */
-  bool findBottle;
+  bool bottleFinded;
   captBottleStop.update();
   
   if (Graph1Step == 0){
     /* Action réalisée sur l'étape */
 
     /* Gestion de la transition */
-    findBottle = captBottleStop.read();
-    if (findBottle && Graph4Step == 0){
+    bottleFinded = captBottleStop.read();
+    if (bottleFinded && Graph4Step == 0){
       Graph1Step = 1;
     }
    } 
@@ -74,8 +77,8 @@ void Graph1(){
     /* Action réalisée sur l'étape */
     digitalWrite(CMD_VER_STOP, LOW);
     /* Gestion de la transition */
-    findBottle = captBottleStop.read();
-    if (findBottle == false) {
+    bottleFinded = captBottleStop.read();
+    if (bottleFinded == false) {
       Graph1Step = 2;
     }
   }
@@ -109,13 +112,13 @@ void Graph1(){
  */
 void Graph2(){
   /* Declare locales */
-  bool findBottle;
-  static unsigned long detectedBottle;
-  captBottleLabel.update();
+  bool bottleFinded;
+  static unsigned long bottleDetected;
+  
   
   if (Graph2Step == 0){
-    findBottle = captBottleLabel.read();
-    if (findBottle){
+    bottleFinded = detectBottle(captLabel.ping_cm(),DISTANCE_DETECT);
+    if (bottleFinded){
       /* Bottle detected on the labeler --> go to step 1*/
       Graph2Step = 1;
     }
@@ -128,15 +131,15 @@ void Graph2(){
   }
   else if (Graph2Step == 2){
     /* Start labelling timer */
-    if (detectedBottle == 0){
-      detectedBottle = millis();
+    if (bottleDetected == 0){
+      bottleDetected = millis();
     }
     /* Goto step 3 */
     Graph2Step = 3;
   }
   else if (Graph2Step == 3){
     /* check if timer is over */
-    if(millis() - detectedBottle >= detectedBottle){
+    if(millis() - bottleDetected >= LABEL_TIMER){
       /* Timer is over */
       /* Go to step 4 */
        Graph2Step = 4;
@@ -146,10 +149,9 @@ void Graph2(){
     /* Retract pusher */
     digitalWrite(CMD_VER_LABEL, HIGH);
     /* reset Timer */
-    detectedBottle = 0;
-    
-    findBottle = captBottleStop.read();
-      if (!findBottle){
+    bottleDetected = 0;
+    bottleFinded = detectBottle(captLabel.ping_cm(),DISTANCE_DETECT);
+      if (!bottleFinded){
         Graph2Step = 5;
       }
   }
@@ -169,7 +171,9 @@ void Graph2(){
  * 
  */
 void Graph3(){
-  
+  /* Declare locales */
+  /*  Action réalisée sur l'étape */
+  /* Gestion de la transition */
 }
 /**
  * @brief Graph 4 : Graph séquentiel de fonctionnement de la table d'accumulation
@@ -177,6 +181,74 @@ void Graph3(){
  * @return none
  * 
  */
+
 void Graph4(){
-  
+  /* Definir les variables / constantes locales */
+  bool bottleFinded;
+  captBottleEnd.update();
+  static unsigned long bottleDetected;
+
+  if (Graph4Step == 0){
+    /* Action réalisée sur l'étape */
+    /* Gestion de la transition */
+    bottleFinded = captBottleEnd.read();
+    if (bottleFinded){
+      Graph4Step = 1;
+    }
+   } 
+  else if (Graph4Step == 1){
+    /* Action réalisée sur l'étape */
+    if (bottleDetected == 0){
+      bottleDetected = millis();
+    }
+    /* Gestion des transitions */
+    /* Transition vers étape 10 */
+    bottleFinded = captBottleEnd.read();
+    if (!bottleFinded) {
+      Graph4Step = 10;
+    }
+    /* Transition vers étape 20 */ 
+    else if (millis() - bottleDetected >= SECURITY_TIMER){
+      /* Timer is over */
+      /* Go to step 20 */
+      Graph4Step = 20;
+    }
+  }
+  else if (Graph4Step == 10){
+    /* Action réalisée sur l'étape */
+    bottleDetected=0;
+    /* Gestion de la transition */
+    Graph4Step=0;
+  }
+
+  else if ( Graph4Step == 20){
+     /* Action réalisée sur l'étape */
+    bottleDetected=0; 
+     /* Gestion de la transition */
+    bottleFinded = captBottleEnd.read();
+    if(!bottleFinded){
+      Graph4Step = 0;
+    }
+  } 
+  else {
+    Graph4Step = 0;
+  }
+
 }
+
+/**
+ * @brief transformation d'une distance en trtue ou false pour bottleFinded
+ * 
+ * @param distance mesure du capteur pour une disstance 
+ * @param distanceDetected seuil de détection
+ * @return true 
+ * @return false 
+ */
+bool detectBottle(float distance, float distanceDetected){
+  if(distance <= distanceDetected){
+    return true;
+  }
+  if (distance == 0 || distance > distanceDetected){
+    return false;
+  }
+}  
