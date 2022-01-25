@@ -5,7 +5,8 @@
     "includePath": [
         "${workspaceRoot}",
         "C:\\Program Files (x86)\\Arduino\\hardware\\**",
-        "C:\\Users\\emmam\\OneDrive\\Documents\\Arduino\\libraries\\**"
+        "D:\\Nextcloud\\Programmation\\Arduino\\libraries\\**",
+        "D:\\Nextcloud\\Programmation\\Arduino\\libraries\\libraries\\**"
     ],
     "programmer": "arduino:avrispmkii",
     "port": "COM4",

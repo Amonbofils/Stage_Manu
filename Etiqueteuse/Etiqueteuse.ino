@@ -22,7 +22,7 @@ Bounce captBottlStop = Bounce();
  * @Graph3 => Graph étiquetteuse
  * @Graph4 => Graph Encombrement
  */
-int Graph1Step, Graph2Step, Graph3step, Graph4Step;
+int Graph1Step = 0, Graph2Step = 0, Graph3step = 0, Graph4Step = 0;
 
 /**
  * @brief setup est exécuté lors du premier tour de cycle et ne sera pas jamais appellé.
@@ -37,7 +37,7 @@ void setup(){
   digitalWrite(CMD_VER_ETIQ, HIGH); 
   captBottlStop.attach(CAPT_VER_STOP,  INPUT_PULLUP );
   captBottlStop.interval(50); 
-
+  
 }
 void loop(){ 
   Graph1();
@@ -54,7 +54,7 @@ void loop(){
  */
 void Graph1(){
   if (Graph1Step == 0){
-
+    
   } 
   else if (Graph1Step == 1){
 
@@ -76,23 +76,56 @@ void Graph1(){
  * 
  */
 void Graph2(){
+  /* Declare locales */
+  bool findBottleStop;
+  static unsigned long detectedBottle;
+  captBottlStop.update();
+  
   if (Graph2Step == 0){
-
+    findBottleStop = captBottlStop.read();
+    if (findBottleStop){
+      /* Bottle detected on the labeler --> go to step 1*/
+      Graph2Step = 1;
+    }
   } 
   else if (Graph2Step == 1){
-
+    /* Push bottle */
+    digitalWrite(CMD_VER_ETIQ, LOW);
+    /* Goto step 2 */
+    Graph2Step = 2;
   }
   else if (Graph2Step == 2){
-    
+    /* Start labelling timer */
+    if (detectedBottle == 0){
+      detectedBottle = millis();
+    }
+    /* Goto step 3 */
+    Graph2Step = 3;
   }
   else if (Graph2Step == 3){
-    
+    /* check if timer is over */
+    if(millis() - detectedBottle >= detectedBottle){
+      /* Timer is over */
+      /* Retract pusher */
+      digitalWrite(CMD_VER_ETIQ, HIGH);
+      /* reset Timer */
+      detectedBottle = 0;
+      /* Go to step 4 */
+       Graph2Step = 4;
+    }
   }
   else if (Graph2Step == 4){
-    
+    findBottleStop = captBottlStop.read();
+      if (!findBottleStop){
+        Graph2Step = 5;
+      }
   }
   else if (Graph2Step == 5){
-    
+    if (Graph1Step == 3){
+      Graph2Step = 0;
+    }
+  } else {
+    Graph2Step = 0;
   }
 }
 
