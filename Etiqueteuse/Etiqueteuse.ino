@@ -12,83 +12,105 @@
 #define TIME_DELAY 2000
 #define TIMER_LABEL 2000
 #define CAPT_VER_STOP 2
-//#define CAPT_VER 12
 
 NewPing captEtiq = NewPing(TRIG_CAPT_ETIQ, ECHO_CAPT_ETIQ, DISTANCE_MAX); 
 Bounce captBottlStop = Bounce();
-//Bounce captBottlencomb = Bounce();
-unsigned long detectedBottle = 0; 
 
-bool findBottleStop = false;
-bool findBottleEtiq = false; 
-bool timerLabelStarted = false;
-//bool passBottleEtiq = false;
-//bool passBottleStart = false;
+/**
+ * @Graph1 => Graph du vérin d'entrée (0-3)
+ * @Graph2 => Graph du vérin étiquette
+ * @Graph3 => Graph étiquetteuse
+ * @Graph4 => Graph Encombrement
+ */
+int Graph1Step, Graph2Step, Graph3step, Graph4Step;
 
+/**
+ * @brief setup est exécuté lors du premier tour de cycle et ne sera pas jamais appellé.
+ * @arg : none
+ * @return : none
+ */
 void setup(){
-
   Serial.begin(9600);
-
-  //passBottleEtiq = true;
-  //passBottleStart = false;
   pinMode(CMD_VER_STOP, OUTPUT);
   pinMode(CMD_VER_ETIQ, OUTPUT); 
   digitalWrite(CMD_VER_STOP, LOW); 
   digitalWrite(CMD_VER_ETIQ, HIGH); 
-
   captBottlStop.attach(CAPT_VER_STOP,  INPUT_PULLUP );
   captBottlStop.interval(50); 
-  //captBottlStop.attach(CAPT_VER_,  INPUT_PULLUP );
- // captBottlStop.interval(50); 
+
 }
 void loop(){ 
+  Graph1();
+  Graph2();
+  Graph3();
+  Graph4();
+}
 
-  captBottlStop.update();
-  findBottleStop = captBottlStop.read();
+/**
+ * @brief Graph 1 : Graph séquentiel de fonctionnement de la partie alimentation en bouteilles de l'étiquetteuse
+ * @arg none
+ * @return none
+ * 
+ */
+void Graph1(){
+  if (Graph1Step == 0){
 
-  if (findBottleStop) {
-    digitalWrite(CMD_VER_STOP, LOW);
-    //passBottleEtiq = 0;
-    //passBottleStart = 1;
-    Serial.println("stop1");
+  } 
+  else if (Graph1Step == 1){
+
   }
-  else if(!findBottleStop){
-    digitalWrite(CMD_VER_STOP,HIGH);
-
-    Serial.println("passer1");
-  }
-
-  float distance = captEtiq.ping_cm(); 
-
-  if (0<distance && distance < DISTANCE_DETECT && !findBottleEtiq){ 
-    findBottleEtiq = true;
-    //passBottleEtiq = true;
-    //digitalWrite(CMD_VER_STOP, LOW); 
-    detectedBottle = millis();
-    timerLabelStarted = true; 
-    digitalWrite(CMD_VER_ETIQ, LOW);
+  else if (Graph1Step == 2){
     
   }
-  else if(findBottleEtiq && !timerLabelStarted && (distance == 0 || distance >DISTANCE_DETECT)){ 
-    findBottleEtiq = false; 
+  else if (Graph1Step == 3){
+    
+  } else {
+    Graph1Step = 0;
   }
-  
-  if(timerLabelStarted && (millis() - detectedBottle >= TIMER_LABEL)){ 
-    digitalWrite(CMD_VER_ETIQ, HIGH);
-    timerLabelStarted = false;
-    //digitalWrite(CMD_VER_STOP, HIGH); 
+}
+
+/**
+ * @brief Graph 2 : Graph séquentiel de fontionnement de la partie vérin pousseur de l'étiquetteuse
+ * @arg none
+ * @return none
+ * 
+ */
+void Graph2(){
+  if (Graph2Step == 0){
+
   } 
-   captBottlStop.update();
-  findBottleStop = captBottlStop.read();
+  else if (Graph2Step == 1){
 
-  /*if (findBottleStop) {
-    digitalWrite(CAPT_VER_STOP, LOW);
-    Serial.println("stop");
   }
-  else if(!findBottleStop){
-    digitalWrite(CAPT_VER_STOP,HIGH);
-    Serial.println("passer");*/
-  
-  
+  else if (Graph2Step == 2){
+    
+  }
+  else if (Graph2Step == 3){
+    
+  }
+  else if (Graph2Step == 4){
+    
+  }
+  else if (Graph2Step == 5){
+    
+  }
+}
 
+/**
+ * @brief Graph 3 : Graph séquentiel de fonctionnement de l'étiquetteuse
+ * @arg none
+ * @return none
+ * 
+ */
+void Graph3(){
+  
+}
+/**
+ * @brief Graph 4 : Graph séquentiel de fonctionnement de la table d'accumulation
+ * @arg none
+ * @return none
+ * 
+ */
+void Graph4(){
+  
 }
