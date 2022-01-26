@@ -3,8 +3,7 @@
 #include <NewPing.h>
 #include <Bounce2.h>
 
-#define TRIG_CAPT_LABEL 4
-#define ECHO_CAPT_LABEL 3
+
 #define CMD_VER_STOP 11 
 #define CMD_VER_LABEL 10 
 #define DISTANCE_DETECT 5 
@@ -15,10 +14,10 @@
 #define SECURITY_TIMER 3000 
 #define CAPT_VER_STOP1 2
 #define CAPT_VER_STOP2 7
+#define CAPT_LABEL 3
 #define CAPT_END 6
 #define DEBUG_BUTTON 8
 
-NewPing captLabel = NewPing(TRIG_CAPT_LABEL, ECHO_CAPT_LABEL, DISTANCE_MAX); 
 Bounce captBottleStop1 = Bounce();
 Bounce captBottleStop2 = Bounce();
 Bounce captBottleLabel = Bounce();
@@ -54,6 +53,8 @@ void setup(){
   captBottleEnd.interval(50);
   debugButton.attach(DEBUG_BUTTON, INPUT_PULLUP);
   debugButton.interval(50);
+  captBottleLabel.attach(CAPT_LABEL, INPUT_PULLUP);
+  captBottleLabel.interval(50);
 }
 
 void loop(){ 
@@ -129,10 +130,12 @@ void Graph1(){
  */
 void Graph2(){
   /* Declare locales */
-  static bool bottleFinded;
+  captBottleLabel.update();
+  bool bottleFinded;
   static unsigned long bottleDetected;
+
   if (Graph2Step == 0){
-    bottleFinded = detectBottle(captLabel.ping_cm(),DISTANCE_DETECT);
+    bottleFinded = !captBottleLabel.read();
     if (bottleFinded){
       /* Bottle detected on the labeler --> go to step 1*/
       Graph2Step = 1;
@@ -165,7 +168,7 @@ void Graph2(){
     digitalWrite(CMD_VER_LABEL, HIGH);
     /* reset Timer */
     bottleDetected = 0;
-    bottleFinded = detectBottle(captLabel.ping_cm(),DISTANCE_DETECT);
+    bottleFinded = !captBottleLabel.read();
       if (!bottleFinded){
         Graph2Step = 5;
       }
@@ -190,13 +193,13 @@ void Graph3(){
   /*  Action réalisée sur l'étape */
   /* Gestion de la transition */
 }
+
 /**
  * @brief Graph 4 : Graph séquentiel de fonctionnement de la table d'accumulation
  * @arg none
  * @return none
  * 
  */
-
 void Graph4(){
   /* Definir les variables / constantes locales */
   bool bottleFinded;
@@ -252,22 +255,6 @@ void Graph4(){
 
 }
 
-/**
- * @brief transformation d'une distance en trtue ou false pour bottleFinded
- * 
- * @param distance mesure du capteur pour une disstance 
- * @param distanceDetected seuil de détection
- * @return true 
- * @return false 
- */
-bool detectBottle(float distance, float distanceDetected){
-  if(distance>0 && distance <= distanceDetected){
-    return true;
-  }
-  if (distance == 0 || distance > distanceDetected){
-    return false;
-  }
-}  
 /**
  * @brief Graph de Debbuggaga : Graph séquentiel de Débuggage
  * @arg none
