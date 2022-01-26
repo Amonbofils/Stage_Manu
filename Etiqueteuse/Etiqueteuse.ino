@@ -13,10 +13,14 @@
 #define LABEL_TIMER 2000
 #define DEBUG_TIMER 1000
 #define SECURITY_TIMER 3000 
-#define CAPT_VER_STOP 2
+#define CAPT_VER_STOP1 2
+#define CAPT_VER_STOP2 7
 #define CAPT_END 6
+
+
 NewPing captLabel = NewPing(TRIG_CAPT_LABEL, ECHO_CAPT_LABEL, DISTANCE_MAX); 
-Bounce captBottleStop = Bounce();
+Bounce captBottleStop1 = Bounce();
+Bounce captBottleStop2 = Bounce();
 Bounce captBottleLabel = Bounce();
 Bounce captBottleEnd = Bounce();
 
@@ -41,8 +45,10 @@ void setup(){
   pinMode(CMD_VER_LABEL, OUTPUT); 
   digitalWrite(CMD_VER_STOP, LOW); 
   digitalWrite(CMD_VER_LABEL, HIGH); 
-  captBottleStop.attach(CAPT_VER_STOP,  INPUT_PULLUP );
-  captBottleStop.interval(50); 
+  captBottleStop1.attach(CAPT_VER_STOP1,  INPUT_PULLUP );
+  captBottleStop1.interval(50); 
+  captBottleStop2.attach(CAPT_VER_STOP2,  INPUT_PULLUP );
+  captBottleStop2.interval(50); 
   captBottleEnd.attach(CAPT_END, INPUT_PULLUP);
   captBottleEnd.interval(50);
 
@@ -66,15 +72,16 @@ void Graph1(){
   /* Definir les variables / constantes locales */
   
   bool bottleFinded;
-  captBottleStop.update();
-
+  captBottleStop1.update();
+  bool bottlePassed;
+  captBottleStop2.update();
   
-  
-  if (Graph1Step == 0){
+    if (Graph1Step == 0){
     /* Action réalisée sur l'étape */
 
     /* Gestion de la transition */
-    bottleFinded = !captBottleStop.read();
+    bottleFinded = !captBottleStop1.read();
+    //Serial.println(captBottleStop2.read());
     if (bottleFinded && Graph4Step == 0){
       Graph1Step = 1;
     }
@@ -83,8 +90,9 @@ void Graph1(){
     /* Action réalisée sur l'étape */
     digitalWrite(CMD_VER_STOP, HIGH);
     /* Gestion de la transition */
-    bottleFinded = !captBottleStop.read();
-    if (bottleFinded == false) {
+    bottleFinded = !captBottleStop1.read();
+    bottlePassed = !captBottleStop2.read();
+    if (bottlePassed) {
       Graph1Step = 2;
     }
   }
