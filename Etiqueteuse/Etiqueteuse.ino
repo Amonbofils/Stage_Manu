@@ -192,11 +192,10 @@ void Graph4(){
   bool bottleFinded;
   captBottleEnd.update();
   static unsigned long bottleDetected;
-
   if (Graph4Step == 0){
     /* Action réalisée sur l'étape */
     /* Gestion de la transition */
-    bottleFinded = captBottleEnd.read();
+    bottleFinded = !captBottleEnd.read();
     if (bottleFinded){
       Graph4Step = 1;
     }
