@@ -11,6 +11,7 @@
 #define DISTANCE_MAX 20 
 #define TIME_DELAY 2000
 #define LABEL_TIMER 2000
+#define DEBUG_TIMER 1000
 #define SECURITY_TIMER 3000 
 #define CAPT_VER_STOP 2
 #define CAPT_END 6
@@ -25,8 +26,9 @@ Bounce captBottleEnd = Bounce();
  * @Graph2 => Graph du vérin étiquette
  * @Graph3 => Graph étiquetteuse
  * @Graph4 => Graph Encombrement
+ * @Graph5 => Graph Débuggage
  */
-int Graph1Step = 0, Graph2Step = 0, Graph3step = 0, Graph4Step = 0;
+int Graph1Step = 0, Graph2Step = 0, Graph3step = 0, Graph4Step = 0, Graph5Step = 0;
 
 /**
  * @brief setup est exécuté lors du premier tour de cycle et ne sera pas jamais appellé.
@@ -51,6 +53,7 @@ void loop(){
   Graph2();
   Graph3();
   Graph4();
+  Graph5();
 }
 
 /**
@@ -61,14 +64,17 @@ void loop(){
  */
 void Graph1(){
   /* Definir les variables / constantes locales */
+  
   bool bottleFinded;
   captBottleStop.update();
+
+  
   
   if (Graph1Step == 0){
     /* Action réalisée sur l'étape */
 
     /* Gestion de la transition */
-    bottleFinded = captBottleStop.read();
+    bottleFinded = !captBottleStop.read();
     if (bottleFinded && Graph4Step == 0){
       Graph1Step = 1;
     }
@@ -114,7 +120,6 @@ void Graph2(){
   /* Declare locales */
   bool bottleFinded;
   static unsigned long bottleDetected;
-  
   
   if (Graph2Step == 0){
     bottleFinded = detectBottle(captLabel.ping_cm(),DISTANCE_DETECT);
@@ -245,10 +250,53 @@ void Graph4(){
  * @return false 
  */
 bool detectBottle(float distance, float distanceDetected){
-  if(distance <= distanceDetected){
+  if(distance>0 && distance <= distanceDetected){
     return true;
   }
   if (distance == 0 || distance > distanceDetected){
     return false;
   }
 }  
+/**
+ * @brief Graph de Debbuggaga : Graph séquentiel de Débuggage
+ * @arg none
+ * @return none
+ * 
+ */
+void Graph5(){
+  /*  Declare locales */
+  static unsigned long debbuggage;
+  unsigned long currentTime;
+  /* Graph */
+  if (Graph5Step == 0) {
+    /* Actions */
+    /* Transitions */
+    Graph5Step = 1;
+  } 
+  else  if (Graph5Step == 1) {
+    /* Actions */
+    debbuggage = millis();
+    /* Transitions */
+    Graph5Step = 2;
+  } 
+  else  if (Graph5Step == 2) {
+    /* Actions */
+    currentTime = millis();
+    if (currentTime - debbuggage >= DEBUG_TIMER) {
+      Serial.println( "********************");
+      Serial.print("Graph 1 : ");
+      Serial.println(Graph1Step);
+      Serial.print("Graph 2 : ");
+      Serial.println(Graph2Step);
+      // Serial.println(Graph3Step);
+      Serial.print("Graph 4 : ");
+      Serial.println(Graph4Step);
+    }
+    /* Transitions */
+    if (currentTime - debbuggage >= DEBUG_TIMER) {
+      Graph5Step = 0;
+    }
+  } else {
+    Graph5Step = 0;
+  } 
+}
