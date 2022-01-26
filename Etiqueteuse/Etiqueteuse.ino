@@ -118,9 +118,8 @@ void Graph1(){
  */
 void Graph2(){
   /* Declare locales */
-  bool bottleFinded;
+  static bool bottleFinded;
   static unsigned long bottleDetected;
-  
   if (Graph2Step == 0){
     bottleFinded = detectBottle(captLabel.ping_cm(),DISTANCE_DETECT);
     if (bottleFinded){
