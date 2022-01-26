@@ -81,16 +81,16 @@ void Graph1(){
    } 
   else if (Graph1Step == 1){
     /* Action réalisée sur l'étape */
-    digitalWrite(CMD_VER_STOP, LOW);
+    digitalWrite(CMD_VER_STOP, HIGH);
     /* Gestion de la transition */
-    bottleFinded = captBottleStop.read();
+    bottleFinded = !captBottleStop.read();
     if (bottleFinded == false) {
       Graph1Step = 2;
     }
   }
   else if (Graph1Step == 2){
     /* Action réalisée sur l'étape */
-    digitalWrite(CMD_VER_STOP, HIGH);
+    digitalWrite(CMD_VER_STOP, LOW);
     /* Gestion de la transition */
     if(Graph2Step == 5){
       Graph1Step = 3;
@@ -99,10 +99,10 @@ void Graph1(){
   }
   else if (Graph1Step == 3){
     /* Action réalisée sur l'étape */
-    
     /* Gestion de la transition */
+
     if(Graph2Step == 0){
-      Graph1Step == 0; 
+      Graph1Step = 0; 
     }    
   } 
   else {
