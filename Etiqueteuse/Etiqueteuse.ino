@@ -16,13 +16,14 @@
 #define CAPT_VER_STOP1 2
 #define CAPT_VER_STOP2 7
 #define CAPT_END 6
-
+#define DEBUG_BUTTON 8
 
 NewPing captLabel = NewPing(TRIG_CAPT_LABEL, ECHO_CAPT_LABEL, DISTANCE_MAX); 
 Bounce captBottleStop1 = Bounce();
 Bounce captBottleStop2 = Bounce();
 Bounce captBottleLabel = Bounce();
 Bounce captBottleEnd = Bounce();
+Bounce debugButton = Bounce();
 
 
 /**
@@ -40,18 +41,19 @@ int Graph1Step = 0, Graph2Step = 0, Graph3step = 0, Graph4Step = 0, Graph5Step =
  * @return : none
  */
 void setup(){
-  Serial.begin(9600);
+  
   pinMode(CMD_VER_STOP, OUTPUT);
   pinMode(CMD_VER_LABEL, OUTPUT); 
   digitalWrite(CMD_VER_STOP, LOW); 
-  digitalWrite(CMD_VER_LABEL, HIGH); 
+  digitalWrite(CMD_VER_LABEL, HIGH);
   captBottleStop1.attach(CAPT_VER_STOP1,  INPUT_PULLUP );
   captBottleStop1.interval(50); 
   captBottleStop2.attach(CAPT_VER_STOP2,  INPUT_PULLUP );
   captBottleStop2.interval(50); 
   captBottleEnd.attach(CAPT_END, INPUT_PULLUP);
   captBottleEnd.interval(50);
-
+  debugButton.attach(DEBUG_BUTTON, INPUT_PULLUP);
+  debugButton.interval(50);
 }
 
 void loop(){ 
@@ -60,6 +62,7 @@ void loop(){
   Graph3();
   Graph4();
   Graph5();
+  
 }
 
 /**
@@ -275,9 +278,16 @@ void Graph5(){
   /*  Declare locales */
   static unsigned long debbuggage;
   unsigned long currentTime;
+  bool bugButton;
+  debugButton.update();
+  
   /* Graph */
   if (Graph5Step == 0) {
     /* Actions */
+    bugButton = debugButton.read();
+  if(bugButton){
+    Serial.begin(9600);
+      }
     /* Transitions */
     Graph5Step = 1;
   } 
@@ -299,6 +309,7 @@ void Graph5(){
       // Serial.println(Graph3Step);
       Serial.print("Graph 4 : ");
       Serial.println(Graph4Step);
+      Serial.end();
     }
     /* Transitions */
     if (currentTime - debbuggage >= DEBUG_TIMER) {
