@@ -1,13 +1,21 @@
 // Programmation Etiqueteuse
 #include <Arduino.h>
-#include <NewPing.h>
-#include <Bounce2.h>
+#include <NewPing.h>  
+#include <DetectBottle.h>
+
 #include "./Config/GlobalVars.h"
 #include "./Config/Setup.h"
 #include "./Graph7/Graph1.h"
 #include "./Graph7/Graph2.h"
 #include "./Graph7/Graph3.h"
 #include "./Graph7/Graph4.h"
+
+int myPin = 2;
+int myTime = 50;
+bool myState = false;
+DetectBottle capteur1(myPin, myTime, myState);
+
+
 /**
  * @Graph1 => Graph du vérin d'entrée (0-3)
  * @Graph2 => Graph du vérin étiquette
@@ -26,6 +34,7 @@ void setup(){
 }
 
 void loop(){ 
+  capteur1.isDetected();
   Graph1();
   Graph2();
   Graph3();
