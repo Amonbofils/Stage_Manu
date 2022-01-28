@@ -1,11 +1,10 @@
 // Programmation Etiqueteuse
 #include <Arduino.h>
-#include <NewPing.h>
 #include <Bounce2.h>
 
 
-#define CMD_VER_STOP 11 
-#define CMD_VER_LABEL 10 
+#define CMD_VER_STOP 12 
+#define CMD_VER_LABEL 11
 #define DISTANCE_DETECT 5 
 #define DISTANCE_MAX 20 
 #define TIME_DELAY 2000
@@ -13,9 +12,9 @@
 #define DEBUG_TIMER 1000
 #define SECURITY_TIMER 3000 
 #define CAPT_VER_STOP1 2
-#define CAPT_VER_STOP2 7
-#define CAPT_LABEL 3
-#define CAPT_END 6
+#define CAPT_VER_STOP2 3
+#define CAPT_LABEL 6
+#define CAPT_END 7
 #define DEBUG_BUTTON 8
 
 Bounce captBottleStop1 = Bounce();
@@ -23,7 +22,6 @@ Bounce captBottleStop2 = Bounce();
 Bounce captBottleLabel = Bounce();
 Bounce captBottleEnd = Bounce();
 Bounce debugButton = Bounce();
-
 
 /**
  * @Graph1 => Graph du vérin d'entrée (0-3)
@@ -40,7 +38,6 @@ int Graph1Step = 0, Graph2Step = 0, Graph3step = 0, Graph4Step = 0, Graph5Step =
  * @return : none
  */
 void setup(){
-  
   pinMode(CMD_VER_STOP, OUTPUT);
   pinMode(CMD_VER_LABEL, OUTPUT); 
   digitalWrite(CMD_VER_STOP, LOW); 
@@ -63,26 +60,22 @@ void loop(){
   Graph3();
   Graph4();
   Graph5();
-  
 }
 
 /**
  * @brief Graph 1 : Graph séquentiel de fonctionnement de la partie alimentation en bouteilles de l'étiquetteuse
  * @arg none
  * @return none
- * 
  */
+
 void Graph1(){
   /* Definir les variables / constantes locales */
-  
   bool bottleFinded;
   captBottleStop1.update();
   bool bottlePassed;
   captBottleStop2.update();
-  
     if (Graph1Step == 0){
     /* Action réalisée sur l'étape */
-
     /* Gestion de la transition */
     bottleFinded = !captBottleStop1.read();
     //Serial.println(captBottleStop2.read());
@@ -107,12 +100,10 @@ void Graph1(){
     if(Graph2Step == 5){
       Graph1Step = 3;
     }
-
   }
   else if (Graph1Step == 3){
     /* Action réalisée sur l'étape */
     /* Gestion de la transition */
-
     if(Graph2Step == 0){
       Graph1Step = 0; 
     }    
@@ -126,14 +117,12 @@ void Graph1(){
  * @brief Graph 2 : Graph séquentiel de fontionnement de la partie vérin pousseur de l'étiquetteuse
  * @arg none
  * @return none
- * 
  */
 void Graph2(){
   /* Declare locales */
   captBottleLabel.update();
   bool bottleFinded;
   static unsigned long bottleDetected;
-
   if (Graph2Step == 0){
     bottleFinded = !captBottleLabel.read();
     if (bottleFinded){
@@ -186,30 +175,25 @@ void Graph2(){
  * @brief Graph 3 : Graph séquentiel de fonctionnement de l'étiquetteuse
  * @arg none
  * @return none
- * 
  */
 void Graph3(){
   /* Declare locales */
   /*  Action réalisée sur l'étape */
   /* Gestion de la transition */
 }
-
 /**
  * @brief Graph 4 : Graph séquentiel de fonctionnement de la table d'accumulation
  * @arg none
  * @return none
- * 
  */
 void Graph4(){
   /* Definir les variables / constantes locales */
   bool bottleFinded;
   captBottleEnd.update();
   static unsigned long bottleDetected;
-  
-  if (Graph4Step == 0){
+    if (Graph4Step == 0){
     /* Action réalisée sur l'étape */
     /* Gestion de la transition */
-    
     bottleFinded = !captBottleEnd.read();
     if (bottleFinded){
       Graph4Step = 1;
@@ -239,7 +223,6 @@ void Graph4(){
     /* Gestion de la transition */
     Graph4Step=0;
   }
-
   else if ( Graph4Step == 20){
      /* Action réalisée sur l'étape */
     bottleDetected=0; 
@@ -252,14 +235,12 @@ void Graph4(){
   else {
     Graph4Step = 0;
   }
-
 }
 
 /**
  * @brief Graph de Debbuggaga : Graph séquentiel de Débuggage
  * @arg none
  * @return none
- * 
  */
 void Graph5(){
   /*  Declare locales */
@@ -267,8 +248,6 @@ void Graph5(){
   unsigned long currentTime;
   bool bugButton;
   debugButton.update();
-  
-  /* Graph */
   if (Graph5Step == 0) {
     /* Actions */
     bugButton = debugButton.read();
@@ -293,7 +272,6 @@ void Graph5(){
       Serial.println(Graph1Step);
       Serial.print("Graph 2 : ");
       Serial.println(Graph2Step);
-      // Serial.println(Graph3Step);
       Serial.print("Graph 4 : ");
       Serial.println(Graph4Step);
       Serial.end();
