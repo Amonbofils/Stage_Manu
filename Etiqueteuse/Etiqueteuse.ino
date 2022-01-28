@@ -74,43 +74,46 @@ void Graph1(){
   captBottleStop1.update();
   bool bottlePassed;
   captBottleStop2.update();
-    if (Graph1Step == 0){
-    /* Action réalisée sur l'étape */
-    /* Gestion de la transition */
-    bottleFinded = !captBottleStop1.read();
-    //Serial.println(captBottleStop2.read());
-    if (bottleFinded && Graph4Step == 0){
-      Graph1Step = 1;
-    }
-   } 
-  else if (Graph1Step == 1){
-    /* Action réalisée sur l'étape */
-    digitalWrite(CMD_VER_STOP, HIGH);
-    /* Gestion de la transition */
-    bottleFinded = !captBottleStop1.read();
-    bottlePassed = !captBottleStop2.read();
-    if (bottlePassed) {
-      Graph1Step = 2;
-    }
-  }
-  else if (Graph1Step == 2){
-    /* Action réalisée sur l'étape */
-    digitalWrite(CMD_VER_STOP, LOW);
-    /* Gestion de la transition */
-    if(Graph2Step == 5){
-      Graph1Step = 3;
-    }
-  }
-  else if (Graph1Step == 3){
-    /* Action réalisée sur l'étape */
-    /* Gestion de la transition */
-    if(Graph2Step == 0){
-      Graph1Step = 0; 
-    }    
-  } 
-  else {
-    Graph1Step = 0;
-  }
+
+  switch(Graph1Step){
+    case 0:
+      /* Action réalisée sur l'étape */
+      /* Gestion de la transition */
+      bottleFinded = !captBottleStop1.read();
+      //Serial.println(captBottleStop2.read());
+      if (bottleFinded && Graph4Step == 0){
+        Graph1Step = 1;
+      }
+      break;
+    case 1:
+      /* Action réalisée sur l'étape */
+      digitalWrite(CMD_VER_STOP, HIGH);
+      /* Gestion de la transition */
+      bottleFinded = !captBottleStop1.read();
+      bottlePassed = !captBottleStop2.read();
+      if (bottlePassed) {
+        Graph1Step = 2;
+      }
+      break;
+    case 2:
+      /* Action réalisée sur l'étape */
+      digitalWrite(CMD_VER_STOP, LOW);
+      /* Gestion de la transition */
+      if(Graph2Step == 5){
+        Graph1Step = 3;
+      }
+      break;
+    case 3:
+      /* Action réalisée sur l'étape */
+      /* Gestion de la transition */
+      if(Graph2Step == 0){
+        Graph1Step = 0; 
+      }    
+      break;
+    default:
+      Graph1Step = 0;
+      break;
+  }    
 }
 
 /**
@@ -123,51 +126,60 @@ void Graph2(){
   captBottleLabel.update();
   bool bottleFinded;
   static unsigned long bottleDetected;
-  if (Graph2Step == 0){
-    bottleFinded = !captBottleLabel.read();
-    if (bottleFinded){
+  switch(Graph2Step){
+    case 0:
+      bottleFinded = !captBottleLabel.read();
+      if(bottleFinded){
       /* Bottle detected on the labeler --> go to step 1*/
-      Graph2Step = 1;
-    }
-  } 
-  else if (Graph2Step == 1){
-    /* Push bottle */
-    digitalWrite(CMD_VER_LABEL, LOW);
-    /* Goto step 2 */
-    Graph2Step = 2;
-  }
-  else if (Graph2Step == 2){
-    /* Start labelling timer */
-    if (bottleDetected == 0){
-      bottleDetected = millis();
-    }
-    /* Goto step 3 */
-    Graph2Step = 3;
-  }
-  else if (Graph2Step == 3){
-    /* check if timer is over */
-    if(millis() - bottleDetected >= LABEL_TIMER){
-      /* Timer is over */
-      /* Go to step 4 */
-       Graph2Step = 4;
-    }
-  }
-  else if (Graph2Step == 4){
-    /* Retract pusher */
-    digitalWrite(CMD_VER_LABEL, HIGH);
-    /* reset Timer */
-    bottleDetected = 0;
-    bottleFinded = !captBottleLabel.read();
-      if (!bottleFinded){
-        Graph2Step = 5;
+        Graph2Step = 1;
       }
-  }
-  else if (Graph2Step == 5){
-    if (Graph1Step == 3){
+      break;
+   
+    case 1:
+      /* Push bottle */
+      digitalWrite(CMD_VER_LABEL, LOW);
+      /* Goto step 2 */
+      Graph2Step = 2;
+      break;
+
+    case 2:
+      /* Start labelling timer */
+      if (bottleDetected == 0){
+        bottleDetected = millis();
+        /* Goto step 3 */
+        Graph2Step = 3;
+      }
+      break;
+  
+    case 3:
+      /* check if timer is over */
+      if(millis() - bottleDetected >= LABEL_TIMER){
+        /* Timer is over */
+        /* Go to step 4 */
+        Graph2Step = 4;
+      }
+      break;
+
+    case 4:
+      /* Retract pusher */
+      digitalWrite(CMD_VER_LABEL, HIGH);
+      /* reset Timer */
+      bottleDetected = 0;
+      bottleFinded = !captBottleLabel.read();
+        if (!bottleFinded){
+          Graph2Step = 5;
+        }
+      break;
+
+    case 5:
+      if (Graph1Step == 3){
+        Graph2Step = 0;
+      }
+      break;
+
+    default:
       Graph2Step = 0;
-    }
-  } else {
-    Graph2Step = 0;
+      break;
   }
 }
 
@@ -187,43 +199,46 @@ void Graph3(){
  * @return none
  */
 void Graph4(){
+  switch(Graph4Step){
   /* Definir les variables / constantes locales */
   bool bottleFinded;
   captBottleEnd.update();
   static unsigned long bottleDetected;
-    if (Graph4Step == 0){
-    /* Action réalisée sur l'étape */
-    /* Gestion de la transition */
-    bottleFinded = !captBottleEnd.read();
-    if (bottleFinded){
-      Graph4Step = 1;
-    }
-   } 
-  else if (Graph4Step == 1){
-    /* Action réalisée sur l'étape */
-    if (bottleDetected == 0){
-      bottleDetected = millis();
-    }
-    /* Gestion des transitions */
-    /* Transition vers étape 10 */
-    bottleFinded = !captBottleEnd.read();
-    if (!bottleFinded) {
-      Graph4Step = 10;
-    }
-    /* Transition vers étape 20 */ 
-    else if (millis() - bottleDetected >= SECURITY_TIMER){
+    case 0:
+      /* Action réalisée sur l'étape */
+      /* Gestion de la transition */
+      bottleFinded = !captBottleEnd.read();
+      if (bottleFinded){
+        Graph4Step = 1;
+      }
+      break; 
+    case 1:
+      /* Action réalisée sur l'étape */
+      if (bottleDetected == 0){
+        bottleDetected = millis();
+      }
+      /* Gestion des transitions */
+      /* Transition vers étape 10 */
+      bottleFinded = !captBottleEnd.read();
+      if (!bottleFinded) {
+        Graph4Step = 10;
+      }
+      /* Transition vers étape 20 */ 
+      else if (millis() - bottleDetected >= SECURITY_TIMER){
       /* Timer is over */
       /* Go to step 20 */
       Graph4Step = 20;
-    }
-  }
-  else if (Graph4Step == 10){
+      }
+      break;
+
+  case 10:
     /* Action réalisée sur l'étape */
     bottleDetected=0;
     /* Gestion de la transition */
     Graph4Step=0;
-  }
-  else if ( Graph4Step == 20){
+    break;
+
+  case 20:
      /* Action réalisée sur l'étape */
     bottleDetected=0; 
      /* Gestion de la transition */
@@ -231,12 +246,12 @@ void Graph4(){
     if(!bottleFinded){
       Graph4Step = 0;
     }
-  } 
-  else {
+    break;
+
+  default:
     Graph4Step = 0;
   }
 }
-
 /**
  * @brief Graph de Debbuggaga : Graph séquentiel de Débuggage
  * @arg none
@@ -248,22 +263,25 @@ void Graph5(){
   unsigned long currentTime;
   bool bugButton;
   debugButton.update();
-  if (Graph5Step == 0) {
-    /* Actions */
-    bugButton = debugButton.read();
-  if(bugButton){
-    Serial.begin(9600);
+  switch(Graph5Step){
+    case 0:
+      /* Actions */
+      bugButton = debugButton.read();
+      if(bugButton){
+        Serial.begin(9600);
       }
-    /* Transitions */
-    Graph5Step = 1;
-  } 
-  else  if (Graph5Step == 1) {
-    /* Actions */
-    debbuggage = millis();
-    /* Transitions */
-    Graph5Step = 2;
-  } 
-  else  if (Graph5Step == 2) {
+        /* Transitions */
+        Graph5Step = 1;
+      break;
+
+    case 1:
+      /* Actions */
+      debbuggage = millis();
+      /* Transitions */
+      Graph5Step = 2;
+      break;
+
+  case 2:
     /* Actions */
     currentTime = millis();
     if (currentTime - debbuggage >= DEBUG_TIMER) {
@@ -280,7 +298,10 @@ void Graph5(){
     if (currentTime - debbuggage >= DEBUG_TIMER) {
       Graph5Step = 0;
     }
-  } else {
+    break;
+
+  default:
     Graph5Step = 0;
-  } 
+    break;
+  }
 }
