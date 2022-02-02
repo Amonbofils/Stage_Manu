@@ -1,5 +1,5 @@
 #include<Arduino.h>
-#include"classTimer.h"
+#include"Timer.h"
 
 void setup{
     Serial.begin(9600);

@@ -16,11 +16,11 @@
 #define CAPT_END 7
 #define DEBUG_BUTTON 8
 
-Bounce captBottleStop1 = Bounce(); // Recurent
-Bounce captBottleStop2 = Bounce(); // Recurent
-Bounce captBottleLabel = Bounce(); // Recurent
-Bounce captBottleEnd = Bounce(); // Recurent
-Bounce debugButton = Bounce(); // Recurent
+Bounce captBottleStop1 = Bounce(); 
+Bounce captBottleStop2 = Bounce();
+Bounce captBottleLabel = Bounce();
+Bounce captBottleEnd = Bounce();
+Bounce debugButton = Bounce();
 
 /**
  * @Graph1 => Graph du vérin d'entrée (0-3)
@@ -41,16 +41,16 @@ void setup(){
   pinMode(CMD_VER_LABEL, OUTPUT); 
   digitalWrite(CMD_VER_STOP, LOW); 
   digitalWrite(CMD_VER_LABEL, HIGH);
-  captBottleStop1.attach(CAPT_VER_STOP1,  INPUT_PULLUP ); // Recurent
-  captBottleStop1.interval(50); // Recurent
-  captBottleStop2.attach(CAPT_VER_STOP2,  INPUT_PULLUP ); // Recurent
-  captBottleStop2.interval(50); // Recurent
-  captBottleEnd.attach(CAPT_END, INPUT_PULLUP); // Recurent
-  captBottleEnd.interval(50); // Recurent
-  debugButton.attach(DEBUG_BUTTON, INPUT_PULLUP); // Recurent
-  debugButton.interval(50); // Recurent
-  captBottleLabel.attach(CAPT_LABEL, INPUT_PULLUP); // Recurent
-  captBottleLabel.interval(50); // Recurent
+  captBottleStop1.attach(CAPT_VER_STOP1,  INPUT_PULLUP );
+  captBottleStop1.interval(50);
+  captBottleStop2.attach(CAPT_VER_STOP2,  INPUT_PULLUP );
+  captBottleStop2.interval(50);
+  captBottleEnd.attach(CAPT_END, INPUT_PULLUP);
+  captBottleEnd.interval(50);
+  debugButton.attach(DEBUG_BUTTON, INPUT_PULLUP);
+  debugButton.interval(50);
+  captBottleLabel.attach(CAPT_LABEL, INPUT_PULLUP);
+  captBottleLabel.interval(50);
 }
 
 void loop(){ 
@@ -78,7 +78,7 @@ void Graph1(){
     case 0:
       /* Action réalisée sur l'étape */
       /* Gestion de la transition */
-      bottleFinded = !captBottleStop1.read(); // Recurent
+      bottleFinded = !captBottleStop1.read();
       if (bottleFinded && Graph4Step == 0){
         Graph1Step = 1;
       }
@@ -87,7 +87,7 @@ void Graph1(){
       /* Action réalisée sur l'étape */
       digitalWrite(CMD_VER_STOP, HIGH);
       /* Gestion de la transition */
-      bottlePassed = !captBottleStop2.read(); // Recurent
+      bottlePassed = !captBottleStop2.read();
       if (bottlePassed) {
         Graph1Step = 2;
       }
@@ -125,7 +125,7 @@ void Graph2(){
   static unsigned long bottleDetected;
   switch(Graph2Step){
     case 0:
-      bottleFinded = !captBottleLabel.read(); // Recurent
+      bottleFinded = !captBottleLabel.read();
       if(bottleFinded){
       /* Bottle detected on the labeler --> go to step 1*/
         Graph2Step = 1;
@@ -162,7 +162,7 @@ void Graph2(){
       digitalWrite(CMD_VER_LABEL, HIGH);
       /* reset Timer */
       bottleDetected = 0;
-      bottleFinded = !captBottleLabel.read(); // Recurent
+      bottleFinded = !captBottleLabel.read();
         if (!bottleFinded){
           Graph2Step = 5;
         }
@@ -204,7 +204,7 @@ void Graph4(){
     case 0:
       /* Action réalisée sur l'étape */
       /* Gestion de la transition */
-      bottleFinded = !captBottleEnd.read(); // Recurent 
+      bottleFinded = !captBottleEnd.read(); 
       if (bottleFinded){
         Graph4Step = 1;
       }
@@ -216,7 +216,7 @@ void Graph4(){
       }
       /* Gestion des transitions */
       /* Transition vers étape 10 */
-      bottleFinded = !captBottleEnd.read(); // Recurent 
+      bottleFinded = !captBottleEnd.read(); 
       if (!bottleFinded) {
         Graph4Step = 10;
       }
@@ -239,7 +239,7 @@ void Graph4(){
      /* Action réalisée sur l'étape */
     bottleDetected=0;
      /* Gestion de la transition */
-    bottleFinded = !captBottleEnd.read(); // Recurent
+    bottleFinded = !captBottleEnd.read();
     if(!bottleFinded){ 
       Graph4Step = 0;
     }
@@ -260,11 +260,11 @@ void Graph5(){
   static unsigned long debbuggage;
   unsigned long currentTime;
   bool bugButton;
-  debugButton.update(); // Recurent
+  debugButton.update();
   switch(Graph5Step){
     case 0:
       /* Actions */
-      bugButton = debugButton.read(); // Recurent
+      bugButton = debugButton.read();
       if(bugButton){
         Serial.begin(9600);
       }
@@ -283,13 +283,13 @@ void Graph5(){
     /* Actions */
     currentTime = millis();
     if (currentTime - debbuggage >= DEBUG_TIMER) {
-      Serial.println( "********************"); // Recurent
-      Serial.print("Graph 1 : "); // Recurent
-      Serial.println(Graph1Step); // Recurent
-      Serial.print("Graph 2 : "); // Recurent
-      Serial.println(Graph2Step); // Recurent
-      Serial.print("Graph 4 : "); // Recurent
-      Serial.println(Graph4Step); // Recurent
+      Serial.println( "********************");
+      Serial.print("Graph 1 : ");
+      Serial.println(Graph1Step);
+      Serial.print("Graph 2 : ");
+      Serial.println(Graph2Step);
+      Serial.print("Graph 4 : ");
+      Serial.println(Graph4Step);
       Serial.end();
     }
     /* Transitions */
