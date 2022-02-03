@@ -40,7 +40,7 @@ Detector::Detector(int type, int pin, bool activeState = true, int pinTrigger = 
   }
 }
 
-bool Detector::isDetected()
+bool Detector::read()
 {
   const bool memoLastState = false;
   _detector.update();

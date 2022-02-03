@@ -17,11 +17,18 @@
 #define CAPT_END 7
 #define DEBUG_BUTTON 8
 
-Bounce captBottleStop1 = Bounce(); 
+// Bounce captBottleStop1 = Bounce(); 
+/* AVANT
+Bounce captBottleStop2 = Bounce();
+*/
+/* APRES */
+Detector captBottleStop1(0, CAPT_VER_STOP1, true);
 Bounce captBottleStop2 = Bounce();
 Bounce captBottleLabel = Bounce();
 Bounce captBottleEnd = Bounce();
 Bounce debugButton = Bounce();
+
+
 
 /**
  * @Graph1 => Graph du vérin d'entrée (0-3)
@@ -42,8 +49,8 @@ void setup(){
   pinMode(CMD_VER_LABEL, OUTPUT); 
   digitalWrite(CMD_VER_STOP, LOW); 
   digitalWrite(CMD_VER_LABEL, HIGH);
-  captBottleStop1.attach(CAPT_VER_STOP1,  INPUT_PULLUP );
-  captBottleStop1.interval(50);
+  //captBottleStop1.attach(CAPT_VER_STOP1,  INPUT_PULLUP );
+  //captBottleStop1.interval(50);
   captBottleStop2.attach(CAPT_VER_STOP2,  INPUT_PULLUP );
   captBottleStop2.interval(50);
   captBottleEnd.attach(CAPT_END, INPUT_PULLUP);
@@ -70,20 +77,37 @@ void loop(){
 
 void Graph1(){
   /* Definir les variables / constantes locales */
+  /* exemple */
+    /* AVANT
   bool bottleFinded;
-  captBottleStop1.update();
+  captBottleStop1.update(); 
+  */
+
   bool bottlePassed;
   captBottleStop2.update();
 
   switch(Graph1Step){
-    case 0:
+    
       /* Action réalisée sur l'étape */
       /* Gestion de la transition */
+
+    /* exemple */
+    /* AVANT
+    case 0:
       bottleFinded = !captBottleStop1.read();
       if (bottleFinded && Graph4Step == 0){
         Graph1Step = 1;
       }
       break;
+      */
+     /* APRES */
+    case 0:
+      if (captBottleStop1.read() && Graph4Step== 0) 
+         Graph1Step = 1;
+      break;
+    /* fin exemple */
+
+    
     case 1:
       /* Action réalisée sur l'étape */
       digitalWrite(CMD_VER_STOP, HIGH);

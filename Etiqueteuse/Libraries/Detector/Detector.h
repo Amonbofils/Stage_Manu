@@ -13,7 +13,7 @@ class Detector
 {
   public:
     Detector(int type, int pin, bool activeState, int pinTrigger = 0, int detectDistance = 0);
-    bool isDetected();
+    bool read();
     bool risingEdge();
     bool fallingEdge();
   private:
