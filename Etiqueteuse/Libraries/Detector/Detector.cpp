@@ -1,16 +1,15 @@
 /*
-  Morse.cpp - Library for flashing Morse code.
-  Created by David A. Mellis, November 2, 2007.
-  Released into the public domain.
+  Detector.cpp - Library for detecting object for many types of sensors.
+  coded by BFAM
+  V0.2
 */
 
 #include "Arduino.h"
 #include "Detector.h"
 #include "Bounce2.h"
-/* Constantes pour le timeout */
+
 const unsigned long MEASURE_TIMEOUT = 25000UL; // 25ms = ~8m à 340m/s
 
-/* Vitesse du son dans l'air en mm/us */
 const float SOUND_SPEED = 340.0 / 1000;
 
 /**
@@ -43,6 +42,7 @@ Detector::Detector(int type, int pin, bool activeState = true, int pinTrigger = 
 
 bool Detector::isDetected()
 {
+  const bool memoLastState = false;
   _detector.update();
   switch (_type) {
     case 0:
@@ -50,19 +50,28 @@ bool Detector::isDetected()
       break;
     case 1: 
       _lastState= (measure(_pinTrigger, _pin)<=_detectDistance)?true:false;
+      if (_lastState != memoLastState && !memoLastState){
+        _rised = true;
+        _fell = false;
+      }
+      else if (_lastState != memoLastState && memoLastState){
+        _rised = false;
+        _fell = true;
+      }
+        fallingEdge();
       return _lastState;
       break;
   }
 }
 
-bool Detector::rinsingEdge(){
+bool Detector::risingEdge(){
    _detector.update();
   switch (_type) {
     case 0:
       return (!_activeState)?_detector.risingEdge():!_detector.fallingEdge();
       break;
     case 1:
-    /* to do */
+      return _rised;
       break;
   }
 }
@@ -73,7 +82,7 @@ bool Detector::fallingEdge(){
       return (!_activeState)?_detector.fallingEdge():!_detector.risingEdge();
       break;
     case 1:
-      /* to do */
+      return _fell;
       break;
   }
 }

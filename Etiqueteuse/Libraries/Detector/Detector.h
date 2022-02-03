@@ -14,11 +14,13 @@ class Detector
   public:
     Detector(int type, int pin, bool activeState, int pinTrigger = 0, int detectDistance = 0);
     bool isDetected();
-    bool rinsingEdge();
+    bool risingEdge();
     bool fallingEdge();
   private:
     bool _activeState;
     bool _lastState;
+    bool _rised;
+    bool _fell;
     int _pin;
     int _pinTrigger;
     int _detectDistance;
