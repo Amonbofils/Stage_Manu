@@ -22,11 +22,10 @@
 Bounce captBottleStop2 = Bounce();
 */
 /* APRES */
-Detector captBottleStop1 (0, CAPT_VER_STOP1, true);
-Detector captBottleStop2 (0, CAPT_VER_STOP2, true);
-Detector captBottleLabel (0, CAPT_LABEL, true);
-Detector captBottleEnd (0, CAPT_LABEL, true);
-
+Detector captBottleStop1(0, CAPT_VER_STOP1, true);
+Bounce captBottleStop2 = Bounce();
+Bounce captBottleLabel = Bounce();
+Bounce captBottleEnd = Bounce();
 Bounce debugButton = Bounce();
 
 
@@ -50,7 +49,7 @@ void setup(){
   pinMode(CMD_VER_LABEL, OUTPUT); 
   digitalWrite(CMD_VER_STOP, LOW); 
   digitalWrite(CMD_VER_LABEL, HIGH);
-  /*captBottleStop1.attach(CAPT_VER_STOP1,  INPUT_PULLUP );
+  //captBottleStop1.attach(CAPT_VER_STOP1,  INPUT_PULLUP );
   //captBottleStop1.interval(50);
   captBottleStop2.attach(CAPT_VER_STOP2,  INPUT_PULLUP );
   captBottleStop2.interval(50);
@@ -59,7 +58,7 @@ void setup(){
   debugButton.attach(DEBUG_BUTTON, INPUT_PULLUP);
   debugButton.interval(50);
   captBottleLabel.attach(CAPT_LABEL, INPUT_PULLUP);
-  captBottleLabel.interval(50);*/
+  captBottleLabel.interval(50);
 }
 
 void loop(){ 
@@ -85,7 +84,7 @@ void Graph1(){
   */
 
   bool bottlePassed;
-  //captBottleStop2.update();
+  captBottleStop2.update();
 
   switch(Graph1Step){
     
@@ -113,8 +112,8 @@ void Graph1(){
       /* Action réalisée sur l'étape */
       digitalWrite(CMD_VER_STOP, HIGH);
       /* Gestion de la transition */
-      // bottlePassed = !captBottleStop2.read();
-      if (captBottleStop2.read()){
+      bottlePassed = !captBottleStop2.read();
+      if (bottlePassed) {
         Graph1Step = 2;
       }
       break;
@@ -146,13 +145,13 @@ void Graph1(){
  */
 void Graph2(){
   /* Declare locales */
-  //captBottleLabel.update();
+  captBottleLabel.update();
   bool bottleFinded;
   static unsigned long bottleDetected;
   switch(Graph2Step){
     case 0:
-      //bottleFinded = !captBottleLabel.read();
-      if(captBottleLabel.read()){
+      bottleFinded = !captBottleLabel.read();
+      if(bottleFinded){
       /* Bottle detected on the labeler --> go to step 1*/
         Graph2Step = 1;
       }
@@ -188,8 +187,8 @@ void Graph2(){
       digitalWrite(CMD_VER_LABEL, HIGH);
       /* reset Timer */
       bottleDetected = 0;
-      //bottleFinded = !captBottleLabel.read();
-        if (!captBottleLabel.read()){
+      bottleFinded = !captBottleLabel.read();
+        if (!bottleFinded){
           Graph2Step = 5;
         }
       break;
@@ -224,14 +223,14 @@ void Graph3(){
 void Graph4(){
   switch(Graph4Step){
   /* Definir les variables / constantes locales */
-  //captBottleEnd.update();
   bool bottleFinded;
+  captBottleEnd.update();
   static unsigned long bottleDetected;
     case 0:
       /* Action réalisée sur l'étape */
       /* Gestion de la transition */
-      //bottleFinded = !captBottleEnd.read(); 
-      if (captBottleEnd.read()){
+      bottleFinded = !captBottleEnd.read(); 
+      if (bottleFinded){
         Graph4Step = 1;
       }
       break; 
@@ -242,8 +241,8 @@ void Graph4(){
       }
       /* Gestion des transitions */
       /* Transition vers étape 10 */
-      //bottleFinded = !captBottleEnd.read(); 
-      if (!captBottleEnd.read()) {
+      bottleFinded = !captBottleEnd.read(); 
+      if (!bottleFinded) {
         Graph4Step = 10;
       }
       /* Transition vers étape 20 */ 
@@ -265,8 +264,8 @@ void Graph4(){
      /* Action réalisée sur l'étape */
     bottleDetected=0;
      /* Gestion de la transition */
-    //bottleFinded = !captBottleEnd.read();
-    if(!captBottleEnd.read()){ 
+    bottleFinded = !captBottleEnd.read();
+    if(!bottleFinded){ 
       Graph4Step = 0;
     }
     break;
