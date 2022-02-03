@@ -1,6 +1,7 @@
 // Programmation Etiqueteuse
 #include <Arduino.h>
 #include <Bounce2.h>
+#include <Detector.h>
 
 #define CMD_VER_STOP 12 
 #define CMD_VER_LABEL 11
