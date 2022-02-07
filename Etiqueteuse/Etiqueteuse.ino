@@ -11,10 +11,10 @@
 #define LABEL_TIMER 2000
 #define DEBUG_TIMER 1000
 #define SECURITY_TIMER 3000 
-#define CAPT_VER_STOP1 2
-#define CAPT_VER_STOP2 3
-#define CAPT_LABEL 6
-#define CAPT_END 7
+#define CAPT_VER_STOP1 1
+#define CAPT_VER_STOP2 2
+#define CAPT_LABEL 3
+#define CAPT_END 4
 #define DEBUG_BUTTON 8
 
 Detector captBottleStop1 (0, CAPT_VER_STOP1, true);
